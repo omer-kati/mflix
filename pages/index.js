@@ -6,37 +6,37 @@ import SideBar from "../components/SideBar";
 import dynamic from "next/dynamic";
 
 const Gantt = dynamic(
-  () => import("../components/Gantt.js"), {ssr: false}
+    () => import("../components/Gantt.js"), {ssr: false}
 );
 
 const Histogram = dynamic(
-  () => import("../components/Histogram.js"), {ssr: false}
+    () => import("../components/Histogram.js"), {ssr: false}
 );
-const {BryntumSplitter} = dynamic(
-  () => import("@bryntum/gantt-react"), {ssr: false}
-);
+// const {BryntumSplitter} = dynamic(
+//     () => import("@bryntum/gantt-react"), {ssr: false}
+// );
 
 export default function Home() {
     const ganttRef = useRef(null);
     const histogramRef = useRef(null);
 
     const [dateRange, setDateRange] = useState({
-        "startData": "2019-01-14",
-        "endData": "2019-01-21"
+        "startDate": "2019-01-14",
+        "endDate": "2019-01-21"
     });
 
-    // setup partnership between gantt and histogram
     useEffect(() => {
-        histogramRef.current.instance.addPartner(ganttRef.current.instance);
-    }, []);
+        if (histogramRef.current?.instance && ganttRef.current?.instance)
+            histogramRef.current.instance.addPartner(ganttRef.current.instance);
+    }, [histogramRef.current, ganttRef.current]);
 
 
     useEffect(() => {
-        if (dateRange.startDate) {
+        if (dateRange.startDate && ganttRef.current?.instance) {
             ganttRef.current.instance.project.setStartDate(dateRange.startDate)
             ganttRef.current.instance.project.setEndDate(dateRange.endDate)
         }
-    }, [dateRange])
+    }, [dateRange, ganttRef.current])
 
     return (
         <Fragment>
